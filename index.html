@@ -5,15 +5,16 @@
     <title>EarthWorks</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="./style.css" />
-
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-      crossorigin=""
-      //mapbox
-      href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' 
+      crossorigin="" 
     />
+    
+    <link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />
     <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script
       src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
@@ -22,16 +23,17 @@
       //mapbox
       src="https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js"
     ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   </head>
   <body>
     <div id="map"></div>
     <script src="./main.js" type="module"></script>
 
-<!-- filter -->
+<!-- filter BUTTONS -->
     <div class="btn-group">
-      <button type="button" id="all" class="btn btn-success">All</button>
-      <button type="button" id="yes" class="btn btn-primary">NSFAS Acc</button>
-      <button type="button" id="no" class="btn btn-danger">Not NSFAC Acc</button>
+      <button type="button" id="all" class="btn btn-light">All</button>
+      <button type="button" id="yes" class="btn btn-success">NSFAS Accredited</button>
+      <button type="button" id="no" class="btn btn-danger">Not NSFAS Accredited</button>
   </div>
   </body>
 </html>

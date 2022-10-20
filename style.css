@@ -1,5 +1,9 @@
 #map {
-  height: 96vh;
+  height: 94vh;
+}
+
+button {
+  width: 300px;
 }
 
 /*Legend specific*/
