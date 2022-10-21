@@ -41,14 +41,12 @@ var tiles = L.tileLayer(
 ).addTo(map);
 
 var Stamen_Watercolor = L.tileLayer(
-  "https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}",
+  "https://api.mapbox.com/styles/v1/marinetblom/cl9hbp0m2004u16jp7hu60fju/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFyaW5ldGJsb20iLCJhIjoiY2w3NjJmMHdlMGZscjNudDhjNHFraDB2dyJ9.unx4-Uni0RveKtgu2YH_qA",
   {
-    attribution:
-      'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: "abcd",
     minZoom: 1,
     maxZoom: 20,
-    ext: "jpg",
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }
 );
 
@@ -76,9 +74,9 @@ function myIcon(distance) {
   }
 }
 //add map scale
-L.control
-  .scale({ metric: true, imperial: false, position: "bottomright" })
-  .addTo(map);
+// L.control
+//   .scale({ metric: true, imperial: false, position: "bottomright" })
+//   .addTo(map);
 
 //logo
 L.Control.Watermark = L.Control.extend({
@@ -110,8 +108,12 @@ document.addEventListener("DOMContentLoaded", () => {
       data.forEach((res) => {
         function marker() {
           var marker = null;
-          marker = L.marker();
-          marker.setLatLng([res.coordinates[1], res.coordinates[0]]);
+
+          marker = new L.Marker(
+            new L.latLng([res.coordinates[1], res.coordinates[0]]),
+            { ...res }
+          ); //se property searched
+
           marker.setIcon(myIcon(res.Distance_to_Main));
           const popupContent = `
                   Name: ${res.Name} <br>
@@ -119,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
           marker.bindPopup(popupContent);
           return marker;
         }
+
         if (res.NSFAS_Acc == "Yes") {
           NSFASYes.push(marker());
         } else if (res.NSFAS_Acc == "No") {
@@ -126,11 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+      console.log({ NSFASYes });
+
       // Create feature groups to Filter data
-      let NSFASYesLayer = L.featureGroup(NSFASYes);
-      let NSFASNoLayer = L.featureGroup(NSFASNo);
+      let NSFASYesLayer = L.layerGroup(NSFASYes);
+      let NSFASNoLayer = L.layerGroup(NSFASNo);
       All = NSFASYes.concat(NSFASNo);
-      let AllLayer = L.featureGroup(All).addTo(map);
+      var AllLayer = L.layerGroup(All).addTo(map);
 
       //layer control
       var baseMaps = {
@@ -144,6 +149,25 @@ document.addEventListener("DOMContentLoaded", () => {
       var layerControl = L.control
         .layers(baseMaps, overlayMaps, { collapsed: false })
         .addTo(map);
+
+      //Search
+      var controlSearch = new L.Control.Search({
+        position: "bottomright",
+        layer: AllLayer,
+        initial: false,
+        propertyName: "Name", //property in marker.options(or feature.properties for vector layer) trough filter elements in layer,
+        zoom: 12,
+        marker: false,
+        moveToLocation: function (latlng, name, map) {
+          console.log(name);
+          console.log(latlng);
+          map.flyTo(latlng, 20);
+          // var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+          // map.setView(latlng, zoom); // access the zoom
+        },
+      });
+
+      controlSearch.addTo(map);
 
       // The JavaScript below is new
       $("#yes").click(function () {
@@ -161,17 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-//Search
-var controlSearch = new L.Control.Search({
-  position: "topleft",
-  layer: All,
-  initial: false,
-  zoom: 12,
-  marker: false,
-});
-
-map.addControl(controlSearch);
 
 /*Legend */
 var legend = L.control({ position: "bottomleft" });
